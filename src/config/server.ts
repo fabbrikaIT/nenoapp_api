@@ -7,6 +7,7 @@ import * as expressValidator from "express-validator";
 import { IndexRoutes } from "../routes/index.route";
 import trafficControl from "../shared/network/traffic-control";
 import { AuthRoutes } from "./../routes/auth.routes";
+import { AdminRoutes } from '../routes/admin.routes';
 
 declare function require(moduleName: string): any;
 
@@ -61,11 +62,14 @@ class Server {
   private ConfigurateRoutes() {
     const indexRoutes = new IndexRoutes();
     const authRoutes = new AuthRoutes();
+    const adminRoutes = new AdminRoutes();
 
     // Rota raiz - Controle de Versão
     this.express.use("/", indexRoutes.router);
     // Rota com as interfaces de Autenticação
     this.express.use(this.apiVersion + "/auth", authRoutes.router);    
+    // Rota com as interfaces administrativas da aplicação
+    this.express.use(this.apiVersion + "/admin", adminRoutes.router);
   }
 }
 
