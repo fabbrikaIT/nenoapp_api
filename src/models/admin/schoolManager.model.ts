@@ -7,6 +7,7 @@ export class SchoolManagerEntity extends BaseEntity implements IToMysqlDbEntity 
     public email: string;
     public cellphone: string;
     public document: number;
+    public birthdate: Date;
 
     public static GetInstance(): SchoolManagerEntity {
         const instance: SchoolManagerEntity = new SchoolManagerEntity();
@@ -14,7 +15,7 @@ export class SchoolManagerEntity extends BaseEntity implements IToMysqlDbEntity 
         instance.name = "";
         instance.email = "";
         instance.cellphone = "";
-        instance.document = 0;
+        instance.document = 0;        
 
         return instance;
     }
@@ -26,23 +27,26 @@ export class SchoolManagerEntity extends BaseEntity implements IToMysqlDbEntity 
                 NAME: this.name,
                 E_MAIL: this.email,
                 CELLPHONE: this.cellphone,
-                DOCUMENT: this.document
+                DOCUMENT: this.document,
+                BIRTHDATE: this.birthdate
             }
         } else {
             return {
                 NAME: this.name,
                 E_MAIL: this.email,
                 CELLPHONE: this.cellphone,
-                DOCUMENT: this.document
+                DOCUMENT: this.document,
+                BIRTHDATE: this.birthdate
             }
         }
     }
     fromMySqlDbEntity(dbentity: any) {
         this.schoolId = dbentity.SCHOOL_ID;
-        this.name = dbentity.NAME;
+        this.name = dbentity.MANAGERNAME;
         this.email = dbentity.E_MAIL;
         this.cellphone = dbentity.CELLPHONE;
         this.document = dbentity.DOCUMENT;
+        this.birthdate = dbentity.BIRTHDATE;
     }
     
 }

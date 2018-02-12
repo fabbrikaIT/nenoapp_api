@@ -1,12 +1,16 @@
-import { SchoolManagerEntity } from './../../models/admin/schoolManager.model';
-import { SchoolEntity } from './../../models/admin/school.model';
+import { check, validationResult } from 'express-validator/check';
+import { matchedData, sanitize } from 'express-validator/filter';
 import { Request, Response } from 'express';
 
+import { SchoolManagerEntity } from './../../models/admin/schoolManager.model';
+import { SchoolEntity } from './../../models/admin/school.model';
+import { CPF, CNPJ } from 'cpf_cnpj';
 import { BaseController } from "../base.controller";
 import { SchoolDAO } from '../../dataaccess/admin/schoolDAO';
 import { AdminErrorsProvider, EAdminErrors } from '../../config/errors/admin.errors';
 import { ServiceResult } from '../../models/serviceResult.model';
 import { SchoolConfigurationEntity } from '../../models/admin/schoolConfig.model';
+import { Utils } from '../../shared/utils';
 
 export class SchoolController extends BaseController {
 
@@ -37,8 +41,8 @@ export class SchoolController extends BaseController {
                 errorMessage: "Nome da escola é obrigatório"
             },
             cnpj: {
-                notEmpty: true,
-                errorMessage: "CNPJ da escola é obrigatório"
+                errorMessage: "CNPJ da escola é obrigatório",
+                notEmpty: true
             },
             legalName: {
                 notEmpty: true,
@@ -46,7 +50,8 @@ export class SchoolController extends BaseController {
             },
             email: {
                 isEmail: true,
-                errorMessage: "Email da escola é obrigatório"
+                errorMessage: "Email da escola é obrigatório",
+                
             },
             phone: {
                 notEmpty: true,
@@ -70,6 +75,8 @@ export class SchoolController extends BaseController {
             }
         });
 
+
+
         // Verifica se a entidade tem erros
         const errors = req.validationErrors();
         if (errors) {
@@ -81,16 +88,45 @@ export class SchoolController extends BaseController {
         school.manager = SchoolManagerEntity.GetInstance();
         school.manager.Map(req.body.manager);
         school.configurations = SchoolConfigurationEntity.GetInstance();
-        if (req.body.configurations) {
-            school.configurations.Map(req.body.configurations);
+
+        // Valida CNPJ
+        if (!CNPJ.isValid(school.cnpj)) {
+            return res.json(AdminErrorsProvider.GetError(EAdminErrors.InvalidCNPJ));
+        }
+        // Valida CPF
+        if (!CPF.isValid(school.manager.document)) {
+            return res.json(AdminErrorsProvider.GetError(EAdminErrors.InvalidCPF));
         }
 
-        this.dataAccess.CreateSchool(school, (err, result) => { 
-            if (err) { 
-                return res.json(ServiceResult.HandlerError(err));
+        //Verifica se o CNPJ já não existe na base
+        this.dataAccess.SearchCNPJ(school.cnpj, (qerror, qresult) => {
+            if (qerror) {
+                return res.json(ServiceResult.HandlerError(qerror));
             }
 
-            return res.json(ServiceResult.HandlerSucess());
+            if (qresult && qresult.length > 0) {
+                return res.json(AdminErrorsProvider.GetError(EAdminErrors.CNPJAlreadyExists));
+            }
+
+            //Criando configurações de ambiente
+            school.configurations.dbName =  `${CNPJ.strip(school.cnpj)}_db`;
+            school.configurations.portalUrl = `http://${Utils.removeSpecialCaracters(school.name).replace( /\s/g, '' ).toLowerCase()}.nenoapp.com.br`;
+
+            this.dataAccess.CreateSchool(school, (err, result) => { 
+                if (err) { 
+                    return res.json(ServiceResult.HandlerError(err));
+                }
+
+                //Criar usuário administrador
+
+                //Cadastrar na lista
+
+                //Enviar e-mail de boas vindas
+
+                
+
+                return res.json(ServiceResult.HandlerSucess());
+            });
         });
     }
 
@@ -139,6 +175,19 @@ export class SchoolController extends BaseController {
 
         let school: SchoolEntity = SchoolEntity.GetInstance();
         school.Map(req.body);
+        school.manager = SchoolManagerEntity.GetInstance();
+        school.manager.Map(req.body.manager);
+        school.configurations = SchoolConfigurationEntity.GetInstance();
+        school.configurations.Map(req.body.configurations);
+
+        // Valida CNPJ
+        if (!CNPJ.isValid(school.cnpj)) {
+            return res.json(AdminErrorsProvider.GetError(EAdminErrors.InvalidCNPJ));
+        }
+        // Valida CPF
+        if (!CPF.isValid(school.manager.document)) {
+            return res.json(AdminErrorsProvider.GetError(EAdminErrors.InvalidCPF));
+        }
 
         this.dataAccess.UpdateSchool(school, (err, result) => { 
             if (err) { 

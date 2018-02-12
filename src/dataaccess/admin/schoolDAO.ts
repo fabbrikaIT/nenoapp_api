@@ -6,7 +6,10 @@ import { BaseDAO } from './../baseDAO';
 export class SchoolDAO extends BaseDAO {
     // SQL Queries
     private listQuery: string = "SELECT * FROM SCHOOL";
-    private getQuery: string = `SELECT S.*, SM.*, SC.* , P.*
+    private getQuery: string = `SELECT S.ID, S.NAME AS SCHOOLNAME, S.CNPJ, S.LEGAL_NAME, S.EMAIL, S.PHONE, S.STREET, S.NUMBER, S.COMPLEMENT, S.POSTCODE, 
+                                    S.DISTRICT, S.CITY, S.STATE, S.REGISTER_DATE, S.SUBSCRIPTION_PLAN, SM.SCHOOL_ID, SM.NAME AS MANAGERNAME, 
+                                    SM.E_MAIL, SM.CELLPHONE, SM.DOCUMENT, SM.BIRTHDATE , SC.SCHOOL_ID, SC.DBNAME, SC.APIPATH, SC.LOGO, SC.PORTAL_URL, 
+                                    P.ID, P.NAME, P.DESCRIPTION, P.CONTRACT_TYPE, P.COST
                                 FROM SCHOOL S, SCHOOL_MANAGER SM, SCHOOL_CONFIGURATIONS SC, PLANS P
                                 WHERE S.ID = SM.SCHOOL_ID
                                 AND S.ID = SC.SCHOOL_ID
@@ -19,6 +22,7 @@ export class SchoolDAO extends BaseDAO {
     private updateSchoolConfigQuery: string = "UPDATE SCHOOL_CONFIGURATIONS SET ? WHERE SCHOOL_ID = ?";
     private updateSchoolManagerQuery: string = "UPDATE SCHOOL_MANAGER SET ? WHERE SCHOOL_ID = ?";
     private deleteSchoolQuery: string = "DELETE FROM SCHOOL WHERE ID = ?";
+    private selectSchoolCpnjQuery: string = "SELECT 1 FROM SCHOOL WHERE CNPJ=?";
 
     /**
      * Listagem de planos
@@ -58,7 +62,7 @@ export class SchoolDAO extends BaseDAO {
                     if (!error && results.length > 0) {
                        
                         let planItem = SchoolEntity.GetInstance();
-                        planItem.fromMySqlDbEntity(results[0]);
+                        planItem.fromMySqlDbEntity(results[0]); 
                         planItem.manager.fromMySqlDbEntity(results[0]);
                         planItem.subscriptionPlan.fromMySqlDbEntity(results[0]);
                         planItem.configurations.fromMySqlDbEntity(results[0]);
@@ -165,6 +169,16 @@ export class SchoolDAO extends BaseDAO {
                     connection.release();
                     return callback(error, result);
                 })
+        });
+    }
+
+    public SearchCNPJ = (cnpj: string, callback) => {
+        this.connDb.Connect(
+            connection => {
+                connection.query(this.selectSchoolCpnjQuery, cnpj, (error, result) => {
+                    connection.release();
+                    return callback(error, result);
+                });
         });
     }
 }

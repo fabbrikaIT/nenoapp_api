@@ -61,7 +61,6 @@ export class SchoolEntity extends BaseEntity implements IToMysqlDbEntity {
             return {
                 NAME: this.name,
                 EMAIL: this.email,
-                CNPJ: this.cnpj,
                 LEGAL_NAME: this.legalName,
                 PHONE: this.phone,
                 STREET: this.street,
@@ -78,7 +77,7 @@ export class SchoolEntity extends BaseEntity implements IToMysqlDbEntity {
     }
     fromMySqlDbEntity(dbentity: any) {
         this.id = dbentity.ID;
-        this.name = dbentity.NAME;
+        this.name = dbentity.SCHOOLNAME;
         this.email = dbentity.EMAIL;
         this.phone = dbentity.PHONE;
         this.cnpj = dbentity.CNPJ;

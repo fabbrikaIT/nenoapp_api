@@ -6,12 +6,15 @@ export class SchoolConfigurationEntity extends BaseEntity implements IToMysqlDbE
     public dbName: string;
     public apiPath: string;
     public logo: string;
+    public portalUrl: string;
 
     public static GetInstance(): SchoolConfigurationEntity {
         const instance: SchoolConfigurationEntity = new SchoolConfigurationEntity();
         instance.schoolId = 0;
         instance.dbName = "";
         instance.apiPath = "";
+        instance.logo = "";
+        instance.portalUrl = "";
 
         return instance;
     }
@@ -22,13 +25,15 @@ export class SchoolConfigurationEntity extends BaseEntity implements IToMysqlDbE
                 SCHOOL_ID: this.schoolId,
                 DBNAME: this.dbName,
                 APIPATH: this.apiPath,
-                LOGO: this.logo
+                LOGO: this.logo,
+                PORTAL_URL: this.portalUrl
             }
         } else {
             return {
                 DBNAME: this.dbName,
                 APIPATH: this.apiPath,
-                LOGO: this.logo
+                LOGO: this.logo,
+                PORTAL_URL: this.portalUrl
             }
         }
     }
@@ -37,6 +42,7 @@ export class SchoolConfigurationEntity extends BaseEntity implements IToMysqlDbE
         this.dbName = dbentity.DBNAME;
         this.apiPath = dbentity.APIPATH;
         this.logo = dbentity.LOGO;
+        this.portalUrl = dbentity.PORTAL_URL;
     }
     
 }

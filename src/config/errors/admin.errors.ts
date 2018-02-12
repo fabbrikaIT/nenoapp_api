@@ -6,6 +6,9 @@ export enum EAdminErrors {
   InvalidRequiredPlansParams = 2,
   InvalidSchoolId = 3,
   InvalidRequiredSchoolParams = 4,
+  InvalidCNPJ = 5,
+  InvalidCPF = 6,
+  CNPJAlreadyExists = 7
 }
 
 export class AdminErrorsProvider {
@@ -19,15 +22,28 @@ export class AdminErrorsProvider {
             errorResult.ErrorMessage = "Id do plano inválido ou nulo";        
             break;   
         case EAdminErrors.InvalidRequiredPlansParams:
-            errorResult.ErrorCode = "PLAN002",
-            errorResult.ErrorMessage = "Parâmetros obrigatórios de plano nulos ou inválidos"
+            errorResult.ErrorCode = "PLAN002";
+            errorResult.ErrorMessage = "Parâmetros obrigatórios de plano nulos ou inválidos";
         case EAdminErrors.InvalidSchoolId:
             errorResult.ErrorCode = "SCHO001";
             errorResult.ErrorMessage = "Id do escola inválido ou nulo";        
             break;   
         case EAdminErrors.InvalidRequiredSchoolParams:
-            errorResult.ErrorCode = "SCHO002",
-            errorResult.ErrorMessage = "Parâmetros obrigatórios de escola nulos ou inválidos"
+            errorResult.ErrorCode = "SCHO002";
+            errorResult.ErrorMessage = "Parâmetros obrigatórios de escola nulos ou inválidos";
+            break;
+        case EAdminErrors.InvalidCNPJ:
+            errorResult.ErrorCode = "SCHO003";
+            errorResult.ErrorMessage = "CNPJ Inválido";
+            break;
+        case EAdminErrors.InvalidCPF:
+            errorResult.ErrorCode = "SCHO004";
+            errorResult.ErrorMessage = "CPF Inválido";
+            break;
+        case EAdminErrors.CNPJAlreadyExists:
+            errorResult.ErrorCode = "SCHO005";
+            errorResult.ErrorMessage = "CNPJ já cadastrado no neno app";
+            break;
       default:
         break;
     }
