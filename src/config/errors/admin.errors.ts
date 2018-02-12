@@ -3,7 +3,9 @@ import logProvider from "../../shared/log/log-provider";
 
 export enum EAdminErrors {
   InvalidPlanId = 1,
-  InvalidRequiredPlansParams = 2
+  InvalidRequiredPlansParams = 2,
+  InvalidSchoolId = 3,
+  InvalidRequiredSchoolParams = 4,
 }
 
 export class AdminErrorsProvider {
@@ -19,6 +21,13 @@ export class AdminErrorsProvider {
         case EAdminErrors.InvalidRequiredPlansParams:
             errorResult.ErrorCode = "PLAN002",
             errorResult.ErrorMessage = "Parâmetros obrigatórios de plano nulos ou inválidos"
+        case EAdminErrors.InvalidSchoolId:
+            errorResult.ErrorCode = "SCHO001";
+            errorResult.ErrorMessage = "Id do escola inválido ou nulo";        
+            break;   
+        case EAdminErrors.InvalidRequiredSchoolParams:
+            errorResult.ErrorCode = "SCHO002",
+            errorResult.ErrorMessage = "Parâmetros obrigatórios de escola nulos ou inválidos"
       default:
         break;
     }
