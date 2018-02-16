@@ -1,3 +1,4 @@
+import { CrudDAO } from './../../dataaccess/crudDAO';
 import { Request, Response } from 'express';
 
 import { BaseController } from "../base.controller";
@@ -8,11 +9,13 @@ import { ServiceResult } from '../../models/serviceResult.model';
 
 export class PlansController extends BaseController {
 
-    private dataAccess: PlansDAO = new PlansDAO();
+    // private dataAccess: PlansDAO = new PlansDAO();
+    private dataAccess: CrudDAO<PlansEntity> = new CrudDAO<PlansEntity>(process.env.DB_NENO_GLOBAL || '', "PLANS", ["ID"], PlansEntity);
 
     public ListPlans = (req: Request, res: Response) => {
 
-        this.dataAccess.ListPlans(res, this.processDefaultResult);
+        //this.dataAccess.ListPlans(res, this.processDefaultResult);
+        this.dataAccess.ListAllItems(res, this.processDefaultResult);
     }
 
     public GetPlan = (req: Request, res: Response) => {
@@ -25,7 +28,9 @@ export class PlansController extends BaseController {
 
         const id = req.params["id"];
 
-        this.dataAccess.GetPlan(id, res, this.processDefaultResult);
+        // this.dataAccess.GetPlan(id, res, this.processDefaultResult);
+        this.dataAccess.GetItem([id], res, this.processDefaultResult);
+        
     }
 
     public CreatePlan = (req: Request, res: Response) => {
@@ -54,7 +59,7 @@ export class PlansController extends BaseController {
         let plan: PlansEntity = PlansEntity.GetInstance();
         plan.Map(req.body);
 
-        this.dataAccess.Create(plan, (err, result) => { 
+        this.dataAccess.CreateItem(plan, res, (res, err, result) => { 
             if (err) { 
                 return res.json(ServiceResult.HandlerError(err));
             }
@@ -89,7 +94,7 @@ export class PlansController extends BaseController {
         let plan: PlansEntity = PlansEntity.GetInstance();
         plan.Map(req.body);
 
-        this.dataAccess.Update(plan, (err, result) => { 
+        this.dataAccess.UpdateItem(plan, [plan.id.toString()], res, (res, err, result) => { 
             if (err) { 
                 return res.json(ServiceResult.HandlerError(err));
             }
@@ -108,7 +113,7 @@ export class PlansController extends BaseController {
 
         const id = req.params["id"];
 
-        this.dataAccess.DeletePlan(id, (err, result) => { 
+        this.dataAccess.DeleteItem([id], res, (res, err, result) => { 
             if (err) { 
                 return res.json(ServiceResult.HandlerError(err));
             }

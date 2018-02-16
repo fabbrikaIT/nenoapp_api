@@ -7,12 +7,12 @@ export enum EContractType {
     Aquisition = 3
 }
 
-export class PlansEntity extends BaseEntity implements IToMysqlDbEntity {
-    public id: number;
-    public name: string;
-    public description: string;
-    public contractType: EContractType;
-    public cost: number;
+export class PlansEntity extends BaseEntity {
+    public id: number = 0;
+    public name: string = "";
+    public description: string = "";
+    public contractType: EContractType = EContractType.Monthly;
+    public cost: number = 0;
 
     public static GetInstance(): PlansEntity {
         const instance: PlansEntity = new PlansEntity();
