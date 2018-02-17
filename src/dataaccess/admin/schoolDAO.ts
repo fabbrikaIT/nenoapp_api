@@ -158,6 +158,8 @@ export class SchoolDAO extends BaseDAO {
                         return callback(error, result);
                     }
                 })
+        }, err =>{
+            return callback(err, null);
         });
     }
 
@@ -169,6 +171,8 @@ export class SchoolDAO extends BaseDAO {
                     connection.release();
                     return callback(error, result);
                 })
+        }, err => {
+            return callback(err, null);
         });
     }
 
@@ -179,6 +183,8 @@ export class SchoolDAO extends BaseDAO {
                     connection.release();
                     return callback(error, result);
                 });
+        }, err => {
+            return callback(err, null);
         });
     }
 }

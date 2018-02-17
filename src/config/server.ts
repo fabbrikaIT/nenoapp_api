@@ -8,6 +8,7 @@ import { IndexRoutes } from "../routes/index.route";
 import trafficControl from "../shared/network/traffic-control";
 import { AuthRoutes } from "./../routes/auth.routes";
 import { AdminRoutes } from '../routes/admin.routes';
+import { MonitoringRoutes } from "../routes/monitoring.routes";
 
 declare function require(moduleName: string): any;
 
@@ -63,11 +64,14 @@ class Server {
     const indexRoutes = new IndexRoutes();
     const authRoutes = new AuthRoutes();
     const adminRoutes = new AdminRoutes();
+    const monitoringRoutes = new MonitoringRoutes();
 
     // Rota raiz - Controle de Versão
     this.express.use("/", indexRoutes.router);
     // Rota com as interfaces de Autenticação
-    this.express.use(this.apiVersion + "/auth", authRoutes.router);    
+    this.express.use(this.apiVersion + "/auth", authRoutes.router);  
+    //Rotas com as interfaces de monitoramento
+    this.express.use(this.apiVersion + "/monitoring", monitoringRoutes.router);  
     // Rota com as interfaces administrativas da aplicação
     this.express.use(this.apiVersion + "/admin", adminRoutes.router);
   }
