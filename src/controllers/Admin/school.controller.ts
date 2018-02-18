@@ -20,6 +20,23 @@ export class SchoolController extends BaseController {
         this.dataAccess.ListSchools(res, this.processDefaultResult);
     }
 
+    public ListSchoolByCity = (req: Request, res: Response) => {
+        req.checkParams("city").notEmpty();
+
+        const errors = req.validationErrors();
+        if (errors) {
+            return res.json(AdminErrorsProvider.GetErrorDetails(EAdminErrors.InvalidRequiredSchoolParams, errors));
+        }
+
+        const city = req.params["city"];
+
+        this.dataAccess.ListSchoolsByCity(city, res, this.processDefaultResult);
+    }
+
+    public ListCities = (req: Request, res: Response) => {
+        this.dataAccess.ListCities(res, this.processDefaultResult);
+    }
+
     public GetSchool = (req: Request, res: Response) => {
         req.checkParams("id").isNumeric();
 

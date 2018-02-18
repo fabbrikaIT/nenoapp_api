@@ -22,7 +22,9 @@ export class AdminRoutes extends BaseRoute {
 
         //Rotas de Gestão de Escola
         this.router.get("/schools", this.schoolController.ListSchool);
+        this.router.get("/schoolsByCity/:city", this.schoolController.ListSchoolByCity);
         this.router.get("/schools/:id", this.schoolController.GetSchool);
+        this.router.get("/schools/list/city", this.schoolController.ListCities);
         this.router.post("/schools", this.schoolController.CreateSchool);
         this.router.put("/schools", this.schoolController.UpdateSchool);
         this.router.delete("/schools/:id", this.schoolController.DeleteSchool);

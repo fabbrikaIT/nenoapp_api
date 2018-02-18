@@ -1,3 +1,4 @@
+import logProvider from "../shared/log/log-provider";
 
 export class ServiceResult {
     public ErrorCode: string = "";
@@ -12,6 +13,8 @@ export class ServiceResult {
         result.ErrorCode = "ERR999";
         result.ErrorMessage = JSON.stringify(error);
         result.Executed = false;
+
+        logProvider.SetErrorLog(result);
 
         return result;
     }

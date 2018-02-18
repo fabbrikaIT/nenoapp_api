@@ -13,6 +13,24 @@ export enum EAdminErrors {
 
 export class AdminErrorsProvider {
   public static GetError(error: EAdminErrors) {
+    let errorResult: ServiceResult = new ServiceResult();
+    errorResult = this.GetErrorEntity(error);
+
+    logProvider.SetErrorLog(errorResult);
+
+    return errorResult;
+  }
+
+  public static GetErrorDetails(error: EAdminErrors, details: any) {
+    const errorResult = this.GetErrorEntity(error);
+    errorResult.ErrorDetails = JSON.stringify(details);
+    
+    logProvider.SetErrorLog(errorResult);
+
+    return errorResult;
+  }
+
+  private static GetErrorEntity(error: EAdminErrors): ServiceResult {
     const errorResult: ServiceResult = new ServiceResult();
     errorResult.Executed = false;
 
@@ -47,15 +65,6 @@ export class AdminErrorsProvider {
       default:
         break;
     }
-
-    logProvider.SetErrorLog(errorResult);
-
-    return errorResult;
-  }
-
-  public static GetErrorDetails(error: EAdminErrors, details: any) {
-    const errorResult = this.GetError(error);
-    errorResult.ErrorDetails = JSON.stringify(details);
 
     return errorResult;
   }

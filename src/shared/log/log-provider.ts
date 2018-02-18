@@ -44,6 +44,7 @@ class LogProvider {
         log.type = ELogType.Error;
         log.source = errorResult.ErrorCode;
         log.message = errorResult.ErrorMessage;
+        log.arguments = errorResult.ErrorDetails;
 
         this.SaveApplicationLog(log);
     }
@@ -54,6 +55,7 @@ class LogProvider {
         log.type = ELogType.Fatal;
         log.source = errorResult.ErrorCode;
         log.message = errorResult.ErrorMessage;
+        log.arguments = errorResult.ErrorDetails;
 
         this.SaveApplicationLog(log);
     }

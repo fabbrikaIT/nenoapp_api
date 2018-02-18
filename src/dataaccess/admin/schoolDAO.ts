@@ -5,7 +5,12 @@ import { BaseDAO } from './../baseDAO';
 
 export class SchoolDAO extends BaseDAO {
     // SQL Queries
-    private listQuery: string = "SELECT * FROM SCHOOL";
+    private listQuery: string = `SELECT S.ID, S.NAME AS SCHOOLNAME, S.CNPJ, S.LEGAL_NAME, S.EMAIL, S.PHONE, S.STREET, S.NUMBER, S.COMPLEMENT, S.POSTCODE, 
+                                S.DISTRICT, S.CITY, S.STATE, S.REGISTER_DATE, S.SUBSCRIPTION_PLAN FROM SCHOOL S
+                                ORDER BY S.REGISTER_DATE DESC LIMIT 30`;
+    private listByCityQuery: string = `SELECT S.ID, S.NAME AS SCHOOLNAME, S.CNPJ, S.LEGAL_NAME, S.EMAIL, S.PHONE, S.STREET, S.NUMBER, S.COMPLEMENT, S.POSTCODE, 
+                                S.DISTRICT, S.CITY, S.STATE, S.REGISTER_DATE, S.SUBSCRIPTION_PLAN FROM SCHOOL S WHERE S.CITY = ?
+                                ORDER BY S.REGISTER_DATE DESC`;
     private getQuery: string = `SELECT S.ID, S.NAME AS SCHOOLNAME, S.CNPJ, S.LEGAL_NAME, S.EMAIL, S.PHONE, S.STREET, S.NUMBER, S.COMPLEMENT, S.POSTCODE, 
                                     S.DISTRICT, S.CITY, S.STATE, S.REGISTER_DATE, S.SUBSCRIPTION_PLAN, SM.SCHOOL_ID, SM.NAME AS MANAGERNAME, 
                                     SM.E_MAIL, SM.CELLPHONE, SM.DOCUMENT, SM.BIRTHDATE , SC.SCHOOL_ID, SC.DBNAME, SC.APIPATH, SC.LOGO, SC.PORTAL_URL, 
@@ -15,6 +20,7 @@ export class SchoolDAO extends BaseDAO {
                                 AND S.ID = SC.SCHOOL_ID
                                 AND S.SUBSCRIPTION_PLAN = P.ID
                                 AND S.ID = ?`;
+    private listSchoolCityQuery: string = `SELECT DISTINCT(CITY) AS CITY FROM SCHOOL`;
     private createSchoolQuery: string = "INSERT INTO SCHOOL SET ?";
     private createSchoolManagerQuery: string = "INSERT INTO SCHOOL_MANAGER SET ?";
     private createSchoolConfigQuery: string = "INSERT INTO SCHOOL_CONFIGURATIONS SET ?";
@@ -25,7 +31,7 @@ export class SchoolDAO extends BaseDAO {
     private selectSchoolCpnjQuery: string = "SELECT 1 FROM SCHOOL WHERE CNPJ=?";
 
     /**
-     * Listagem de planos
+     * Listagem de escolas
      */
     public ListSchools = (res: Response, callback) => {
         this.connDb.Connect(
@@ -49,7 +55,58 @@ export class SchoolDAO extends BaseDAO {
                 });
             }, 
             error => {
-                callback(null, error);
+                callback(res, null, error);
+            }
+        );
+    }
+
+    public ListSchoolsByCity = (city: string, res: Response, callback) => {
+        this.connDb.Connect(
+            connection => {
+                connection.query(this.listByCityQuery, city, (error, results) => {
+                    if (!error) {
+                        let list: Array<SchoolEntity>;
+                        list = results.map(item => {
+                            let planItem = new SchoolEntity();
+                            planItem.fromMySqlDbEntity(item);
+
+                            return planItem;
+                        });
+
+                        connection.release();
+                        return callback(res, error, list);
+                    }
+
+                    connection.release();
+                    return callback(res, error, results);
+                });
+            }, 
+            error => {
+                callback(res, null, error);
+            }
+        );
+    }
+
+    public ListCities = (res: Response, callback) => {
+        this.connDb.Connect(
+            connection => {
+                connection.query(this.listSchoolCityQuery, (error, results) => {
+                    if (!error) {
+                        let list: Array<string>;
+                        list = results.map(item => {
+                            return item.CITY;
+                        });
+
+                        connection.release();
+                        return callback(res, error, list);
+                    }
+
+                    connection.release();
+                    return callback(res, error, results);
+                });
+            }, 
+            error => {
+                callback(res, null, error);
             }
         );
     }
