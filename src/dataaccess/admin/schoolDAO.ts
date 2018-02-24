@@ -14,7 +14,7 @@ export class SchoolDAO extends BaseDAO {
     private getQuery: string = `SELECT S.ID, S.NAME AS SCHOOLNAME, S.CNPJ, S.LEGAL_NAME, S.EMAIL, S.PHONE, S.STREET, S.NUMBER, S.COMPLEMENT, S.POSTCODE, 
                                     S.DISTRICT, S.CITY, S.STATE, S.REGISTER_DATE, S.SUBSCRIPTION_PLAN, SM.SCHOOL_ID, SM.NAME AS MANAGERNAME, 
                                     SM.E_MAIL, SM.CELLPHONE, SM.DOCUMENT, SM.BIRTHDATE , SC.SCHOOL_ID, SC.DBNAME, SC.APIPATH, SC.LOGO, SC.PORTAL_URL, 
-                                    P.ID, P.NAME, P.DESCRIPTION, P.CONTRACT_TYPE, P.COST
+                                    P.ID AS PLAN_ID, P.NAME, P.DESCRIPTION, P.CONTRACT_TYPE, P.COST
                                 FROM SCHOOL S, SCHOOL_MANAGER SM, SCHOOL_CONFIGURATIONS SC, PLANS P
                                 WHERE S.ID = SM.SCHOOL_ID
                                 AND S.ID = SC.SCHOOL_ID

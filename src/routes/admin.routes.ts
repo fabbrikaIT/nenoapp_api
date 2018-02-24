@@ -4,14 +4,24 @@ import { BaseRoute } from './base.routes';
 import { AdminController } from "../controllers/Admin/admin.controller";
 import { PlansController } from "../controllers/Admin/plans.controller";
 import { SchoolController } from '../controllers/Admin/school.controller';
+import { ConfigController } from "../controllers/Admin/config.controller";
 
 export class AdminRoutes extends BaseRoute {
     private controller: AdminController = new AdminController();
     private plansController: PlansController = new PlansController();
     private schoolController: SchoolController = new SchoolController();
+    private configController: ConfigController = new ConfigController();
 
     constructor() {
         super();
+
+        //Rotas de Configuração do Sistema
+        this.router.get("/screens", this.configController.ListScreens);
+        this.router.get("/screenstree", this.configController.ListScreensTree);
+        this.router.get("/screens/:id", this.configController.GetScreens);
+        this.router.post("/screens", this.configController.CreateScreen);
+        this.router.put("/screens", this.configController.UpdateScreen);
+        this.router.delete("/screens/:id", this.configController.DeleteScreen);
     
         // Rotas de Planos
         this.router.get("/plans", this.plansController.ListPlans);
