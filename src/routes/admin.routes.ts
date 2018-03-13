@@ -22,6 +22,14 @@ export class AdminRoutes extends BaseRoute {
         this.router.post("/screens", this.configController.CreateScreen);
         this.router.put("/screens", this.configController.UpdateScreen);
         this.router.delete("/screens/:id", this.configController.DeleteScreen);
+
+        //Rotas de Perfis de Acesso do Sistema
+        this.router.get("/profiles", this.configController.ListProfiles);
+        this.router.get("/profiles/admin", this.configController.GetAdminProfile);
+        this.router.get("/profiles/:id", this.configController.GetProfile);
+        this.router.post("/profiles", this.configController.CreateProfile);
+        this.router.put("/profiles", this.configController.UpdateProfile);
+        this.router.delete("/profiles/:id", this.configController.DeleteProfile);
     
         // Rotas de Planos
         this.router.get("/plans", this.plansController.ListPlans);
@@ -38,5 +46,8 @@ export class AdminRoutes extends BaseRoute {
         this.router.post("/schools", this.schoolController.CreateSchool);
         this.router.put("/schools", this.schoolController.UpdateSchool);
         this.router.delete("/schools/:id", this.schoolController.DeleteSchool);
+
+        //Rota para pesquisa de Doenças - 
+        this.router.get("/cid/:searchText", this.controller.SearchDesease);
       }
 }

@@ -1,6 +1,9 @@
+import { UserEntity } from './../../models/auth/user.model';
 import { check, validationResult } from 'express-validator/check';
 import { matchedData, sanitize } from 'express-validator/filter';
 import { Request, Response } from 'express';
+import * as passgen from 'generate-password';
+import {Md5} from 'ts-md5/dist/md5';
 
 import { SchoolManagerEntity } from './../../models/admin/schoolManager.model';
 import { SchoolEntity } from './../../models/admin/school.model';
@@ -11,10 +14,43 @@ import { AdminErrorsProvider, EAdminErrors } from '../../config/errors/admin.err
 import { ServiceResult } from '../../models/serviceResult.model';
 import { SchoolConfigurationEntity } from '../../models/admin/schoolConfig.model';
 import { Utils } from '../../shared/utils';
+import { AuthDAO } from '../../dataaccess/auth/authDAO';
 
 export class SchoolController extends BaseController {
 
     private dataAccess: SchoolDAO = new SchoolDAO();
+
+    public InitSchool = (req: Request, res: Response) => {
+        let school: SchoolEntity = SchoolEntity.GetInstance();
+        school.Map(req.body);
+        school.manager = SchoolManagerEntity.GetInstance();
+        school.manager.Map(req.body.manager);
+        school.configurations = SchoolConfigurationEntity.GetInstance();
+
+        //Criar usuário administrador
+        const authDataAccess: AuthDAO = new AuthDAO();
+        const adminUser: UserEntity = UserEntity.GetInstance();
+        adminUser.email = school.manager.email;
+        adminUser.name = school.manager.name;
+        adminUser.schoolId = school.id;
+
+        // Gerando senha
+        const password = passgen.generate({length: 10, numbers: true, symbols: true, excludeSimilarCharacters: true});
+        const originalPassword = password;
+        adminUser.password = Md5.hashStr(password).toString();
+
+        authDataAccess.Insert(adminUser, (err, result) => {
+            if (err) { 
+                return res.json(ServiceResult.HandlerError(err));
+            }                              
+
+            //Cadastrar na lista
+
+            //Enviar e-mail de boas vindas
+
+            return res.json(ServiceResult.HandlerSucess());
+        });
+    }
 
     public ListSchool = (req: Request, res: Response) => {
         this.dataAccess.ListSchools(res, this.processDefaultResult);
@@ -132,15 +168,7 @@ export class SchoolController extends BaseController {
             this.dataAccess.CreateSchool(school, (err, result) => { 
                 if (err) { 
                     return res.json(ServiceResult.HandlerError(err));
-                }
-
-                //Criar usuário administrador
-
-                //Cadastrar na lista
-
-                //Enviar e-mail de boas vindas
-
-                
+                }                              
 
                 return res.json(ServiceResult.HandlerSucess());
             });

@@ -1,5 +1,5 @@
-import { AuthController } from './../controllers/auth.controller';
 import { BaseRoute } from "./base.routes";
+import { AuthController } from '../controllers/Auth/auth.controller';
 
 export class AuthRoutes extends BaseRoute {
     private controller: AuthController = new AuthController();
@@ -11,7 +11,8 @@ export class AuthRoutes extends BaseRoute {
   }
 
   private buildRoutes() {
-    this.router.post("/", this.controller.OwnerLogin);
-    this.router.post("/user", this.controller.UserLogin);    
+    this.router.post("/", this.controller.Login);
+    
+    this.router.post("/newuser", this.controller.CreateUser);
   }
 }

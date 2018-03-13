@@ -5,6 +5,7 @@ import { BaseController } from "../base.controller";
 import { AdminErrorsProvider, EAdminErrors } from '../../config/errors/admin.errors';
 import { ServiceResult } from '../../models/serviceResult.model';
 import { ScreenEntity } from '../../models/config/screen.model';
+import { ProfileEntity } from '../../models/config/profile.model';
 
 export class ConfigController extends BaseController {
     private dataAccess: ConfigDAO = new ConfigDAO();
@@ -155,5 +156,119 @@ export class ConfigController extends BaseController {
 
             return res.json(ServiceResult.HandlerSucess());
         });
+    }
+
+
+    // Metodos de manupulação de Perfis do sistema
+    public ListProfiles = (req: Request, res: Response) => {
+        this.dataAccess.Profile.ListAllItems(res, this.processDefaultResult);
+    }
+
+    public GetProfile = (req: Request, res: Response) => {
+        req.checkParams("id").isNumeric();
+
+        const errors = req.validationErrors();
+        if (errors) {
+            return res.json(AdminErrorsProvider.GetErrorDetails(EAdminErrors.InvalidPlanId, errors));
+        }
+
+        const id = req.params["id"];
+
+        this.dataAccess.Profile.GetItem([id], res, (res, err, result: ProfileEntity) => {
+            if (err) { 
+                return res.json(ServiceResult.HandlerError(err));
+            }
+
+            return res.json(ServiceResult.HandlerSucessResult(result));
+        } );
+    }
+
+    public CreateProfile = (req: Request, res: Response) => {
+        // Validação dos dados de entrada
+        req.checkBody({
+            name: {
+                notEmpty: true,
+                errorMessage: "Nome da tela é obrigatório"
+            },
+            description: {
+                notEmpty: true,
+                errorMessage: "Descrição é obrigatório"
+            }            
+        });
+
+        // Verifica se a entidade tem erros
+        const errors = req.validationErrors();
+        if (errors) {
+            return res.json(AdminErrorsProvider.GetErrorDetails(EAdminErrors.InvalidRequiredPlansParams, errors));
+        }
+
+        let profile: ProfileEntity = ProfileEntity.GetInstance();
+        profile.Map(req.body);
+
+        this.dataAccess.Profile.CreateItem(profile, res, (res, err, result) => { 
+            if (err) { 
+                return res.json(ServiceResult.HandlerError(err));
+            }
+
+            return res.json(ServiceResult.HandlerSucess());
+        });
+    }
+
+    public UpdateProfile = (req: Request, res: Response) => {
+        // Validação dos dados de entrada
+        req.checkBody({
+            id: {
+                isNumeric: true,
+                errorMessage: "Id da tela é obrigatório"
+            }, 
+            name: {
+                notEmpty: true,
+                errorMessage: "Nome da tela é obrigatório"
+            },
+            description: {
+                notEmpty: true,
+                errorMessage: "Descrição é obrigatório"
+            } 
+        });
+
+        // Verifica se a entidade tem erros
+        const errors = req.validationErrors();
+        if (errors) {
+            return res.json(AdminErrorsProvider.GetErrorDetails(EAdminErrors.InvalidRequiredPlansParams, errors));
+        }
+
+        let profile: ProfileEntity = ProfileEntity.GetInstance();
+        profile.Map(req.body);
+
+        this.dataAccess.Profile.UpdateItem(profile, [profile.id.toString()], res, (res, err, result) => { 
+            if (err) { 
+                return res.json(ServiceResult.HandlerError(err));
+            }
+
+            return res.json(ServiceResult.HandlerSucess());
+        });
+    }
+
+    public DeleteProfile = (req: Request, res: Response) => {
+        req.checkParams("id").isNumeric();
+
+        const errors = req.validationErrors();
+        if (errors) {
+            return res.json(AdminErrorsProvider.GetErrorDetails(EAdminErrors.InvalidPlanId, errors));
+        }
+
+        const id = req.params["id"];
+
+        this.dataAccess.Profile.DeleteItem([id], res, (res, err, result) => { 
+            if (err) { 
+                return res.json(ServiceResult.HandlerError(err));
+            }
+
+            return res.json(ServiceResult.HandlerSucess());
+        });
+    }
+
+    public GetAdminProfile = (req: Request, res: Response) => {
+        this.dataAccess.Profile.ListFilteredItems(["IS_ADMIN"], ["1"], res, this.processDefaultResult);
     }
 }

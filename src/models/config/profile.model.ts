@@ -3,20 +3,30 @@ import { BaseEntity } from '../base.model';
 
 export class ProfileEntity extends BaseEntity {
 
-    public Id: number = 0;
-    public Name: string = "";
-    public Description: string = "";
-    public ScreenAccess: Array<ScreenEntity>;
+    public id: number = 0;
+    public name: string = "";
+    public description: string = "";
+    public isAdmin: boolean = false;
+    public screenAccess: Array<ScreenEntity>;
+
+    public static GetInstance(): ProfileEntity {
+        const instance: ProfileEntity = new ProfileEntity();
+        instance.screenAccess = new Array<ScreenEntity>();
+
+        return instance;
+    }
 
     toMysqlDbEntity(isNew: boolean) {
         return {
-            NAME: this.Name,
-            DESCRIPTION: this.Description
+            NAME: this.name,
+            DESCRIPTION: this.description,
+            IS_ADMIN: this.isAdmin ? 1 : 0
         }
     }
     fromMySqlDbEntity(dbentity: any) {
-        this.Id = dbentity.ID;
-        this.Name = dbentity.NAME;
-        this.Description = dbentity.DESCRIPTION;
+        this.id = dbentity.ID;
+        this.name = dbentity.NAME;
+        this.description = dbentity.DESCRIPTION;
+        this.isAdmin = dbentity.IS_ADMIN;
     }
 }

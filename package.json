@@ -25,6 +25,7 @@
     "express-validator": "^4.3.0",
     "generate-password": "^1.4.0",
     "jquery": "^3.3.1",
+    "mongodb": "^3.0.3",
     "mysql": "^2.15.0",
     "swt-framework": "^0.2.0",
     "ts-md5": "^1.2.3"

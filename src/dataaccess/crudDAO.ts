@@ -61,6 +61,14 @@ export class CrudDAO<T extends BaseEntity> extends baseCRUD<T> {
         this.ProcessListFilteredQuery(query, keyFilter, res, callback);
     }
 
+    public SearchItems = (searchField: string, keyFilter: string, res: Response, callback) => {
+        let where: string = `${searchField} like '%${keyFilter}%'`;
+
+        const query = `SELECT * FROM ${this.table} WHERE ${where}`;
+
+        this.ProcessListFilteredQuery(query, [keyFilter], res, callback);
+    }
+
     public GetItem = (keyFilter: Array<string>, res: Response, callback) => {
         const query = `SELECT * FROM ${this.table} WHERE ${this.whereKey}`;
 
